@@ -15,7 +15,7 @@ C:/Users/Usuario/Ned2_Sim
 -logFile
 Logs/AssetImportWorker0.log
 -srvPort
-56516
+59019
 Successfully changed project path to: C:/Users/Usuario/Ned2_Sim
 C:/Users/Usuario/Ned2_Sim
 [UnityMemory] Configuration Parameters - Can be set up in boot.config
@@ -49,12 +49,12 @@ C:/Users/Usuario/Ned2_Sim
     "memorysetup-temp-allocator-size-cloud-worker=32768"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [2236] Host "[IP] 172.29.160.1 [Port] 0 [Flags] 2 [Guid] 336410355 [EditorId] 336410355 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-PDB7F9E) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
+Player connection [13984] Host "[IP] 172.22.144.1 [Port] 0 [Flags] 2 [Guid] 1605473955 [EditorId] 1605473955 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-PDB7F9E) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
 
-Player connection [2236] Host "[IP] 172.29.160.1 [Port] 0 [Flags] 2 [Guid] 336410355 [EditorId] 336410355 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-PDB7F9E) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [13984] Host "[IP] 172.22.144.1 [Port] 0 [Flags] 2 [Guid] 1605473955 [EditorId] 1605473955 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-PDB7F9E) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
 
 [Physics::Module] Initialized MultithreadedJobDispatcher with 15 workers.
-Refreshing native plugins compatible for Editor in 6.23 ms, found 5 plugins.
+Refreshing native plugins compatible for Editor in 2004.16 ms, found 5 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2022.3.20f1 (61c2feb0970d)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/Resources/UnitySubsystems
@@ -70,51 +70,51 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56112
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56528
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.005646 seconds.
-- Loaded All Assemblies, in  0.257 seconds
+Registered in 0.512788 seconds.
+- Loaded All Assemblies, in  7.632 seconds
 Native extension for WindowsStandalone target not found
 [usbmuxd] Start listen thread
 [usbmuxd] Listen thread started
 Native extension for iOS target not found
 Native extension for Android target not found
-Android Extension - Scanning For ADB Devices 191 ms
+Android Extension - Scanning For ADB Devices 184 ms
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.459 seconds
-Domain Reload Profiling: 715ms
-	BeginReloadAssembly (76ms)
+- Finished resetting the current domain, in  0.636 seconds
+Domain Reload Profiling: 8266ms
+	BeginReloadAssembly (5724ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
 		CreateAndSetChildDomain (1ms)
-	RebuildCommonClasses (24ms)
-	RebuildNativeTypeToScriptingClass (7ms)
-	initialDomainReloadingComplete (42ms)
-	LoadAllAssembliesAndSetupDomain (107ms)
-		LoadAssemblies (75ms)
+	RebuildCommonClasses (194ms)
+	RebuildNativeTypeToScriptingClass (6ms)
+	initialDomainReloadingComplete (548ms)
+	LoadAllAssembliesAndSetupDomain (1157ms)
+		LoadAssemblies (5724ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (105ms)
-			TypeCache.Refresh (103ms)
-				TypeCache.ScanAssembly (94ms)
+		AnalyzeDomain (1155ms)
+			TypeCache.Refresh (1154ms)
+				TypeCache.ScanAssembly (1145ms)
 			ScanForSourceGeneratedMonoScriptInfo (0ms)
 			ResolveRequiredComponents (0ms)
-	FinalizeReload (459ms)
+	FinalizeReload (636ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (415ms)
+		SetupLoadedEditorAssemblies (594ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (290ms)
+			InitializePlatformSupportModulesInManaged (454ms)
 			SetLoadedEditorAssemblies (3ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (2ms)
-			ProcessInitializeOnLoadAttributes (85ms)
-			ProcessInitializeOnLoadMethodAttributes (37ms)
+			BeforeProcessingInitializeOnLoad (1ms)
+			ProcessInitializeOnLoadAttributes (89ms)
+			ProcessInitializeOnLoadMethodAttributes (47ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -122,53 +122,53 @@ Domain Reload Profiling: 715ms
 ========================================================================
 Worker process is ready to serve import requests
 Begin MonoManager ReloadAssembly
-- Loaded All Assemblies, in  0.461 seconds
-Refreshing native plugins compatible for Editor in 2.95 ms, found 5 plugins.
+- Loaded All Assemblies, in  6.880 seconds
+Refreshing native plugins compatible for Editor in 3.30 ms, found 5 plugins.
 Native extension for WindowsStandalone target not found
 Native extension for iOS target not found
 Native extension for Android target not found
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.407 seconds
-Domain Reload Profiling: 866ms
-	BeginReloadAssembly (100ms)
+- Finished resetting the current domain, in  0.416 seconds
+Domain Reload Profiling: 7294ms
+	BeginReloadAssembly (94ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (3ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
 		CreateAndSetChildDomain (15ms)
-	RebuildCommonClasses (23ms)
-	RebuildNativeTypeToScriptingClass (7ms)
-	initialDomainReloadingComplete (29ms)
-	LoadAllAssembliesAndSetupDomain (301ms)
-		LoadAssemblies (231ms)
+	RebuildCommonClasses (22ms)
+	RebuildNativeTypeToScriptingClass (6ms)
+	initialDomainReloadingComplete (28ms)
+	LoadAllAssembliesAndSetupDomain (6727ms)
+		LoadAssemblies (6414ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (128ms)
-			TypeCache.Refresh (113ms)
-				TypeCache.ScanAssembly (102ms)
+		AnalyzeDomain (369ms)
+			TypeCache.Refresh (354ms)
+				TypeCache.ScanAssembly (343ms)
 			ScanForSourceGeneratedMonoScriptInfo (11ms)
 			ResolveRequiredComponents (3ms)
-	FinalizeReload (407ms)
+	FinalizeReload (416ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (288ms)
+		SetupLoadedEditorAssemblies (308ms)
 			LogAssemblyErrors (0ms)
 			InitializePlatformSupportModulesInManaged (24ms)
 			SetLoadedEditorAssemblies (2ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (42ms)
-			ProcessInitializeOnLoadAttributes (200ms)
+			BeforeProcessingInitializeOnLoad (41ms)
+			ProcessInitializeOnLoadAttributes (221ms)
 			ProcessInitializeOnLoadMethodAttributes (16ms)
 			AfterProcessingInitializeOnLoad (4ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
 		AwakeInstancesAfterBackupRestoration (5ms)
 Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
-Refreshing native plugins compatible for Editor in 2.93 ms, found 5 plugins.
+Refreshing native plugins compatible for Editor in 3.39 ms, found 5 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 3717 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 47 unused Assets / (102.5 KB). Loaded Objects now: 4174.
+Unloading 47 unused Assets / (118.6 KB). Loaded Objects now: 4174.
 Memory consumption went from 147.1 MB to 147.0 MB.
-Total: 2.552000 ms (FindLiveObjects: 0.203700 ms CreateObjectMapping: 0.087700 ms MarkObjects: 2.145100 ms  DeleteObjects: 0.114400 ms)
+Total: 2.741700 ms (FindLiveObjects: 0.178600 ms CreateObjectMapping: 0.084800 ms MarkObjects: 2.374500 ms  DeleteObjects: 0.102900 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
@@ -186,271 +186,9 @@ AssetImportParameters requested are different than current active one (requested
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
 ========================================================================
 Received Import Request.
-  Time since last request: 8779.410292 seconds.
-  path: Assets
-  artifactKey: Guid(00000000000000001000000000000000) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets using Guid(00000000000000001000000000000000) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8a4fe85251aa2e89732c359432baa2c3') in 0.001971 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 14.562424 seconds.
-  path: Assets/URDF
-  artifactKey: Guid(3edb0b3bbc7cb6344ae5c96a0c51ad00) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF using Guid(3edb0b3bbc7cb6344ae5c96a0c51ad00) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'de5bee5c156e026eb7adf4347c3ee65a') in 0.000482 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 52.062018 seconds.
-  path: Assets/URDF/niryo_ned2.transmission.urdf
-  artifactKey: Guid(05b160b5462bdc84d9cacd554485f79b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2.transmission.urdf using Guid(05b160b5462bdc84d9cacd554485f79b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '995dd9825d93671dc5e12505dbe97dc6') in 0.006904 seconds
+  Time since last request: 232.815404 seconds.
+  path: Assets/niryo_robot_description/niryo_ned2_UwU.urdf
+  artifactKey: Guid(297c3b5e35cc32640b91a230392cf381) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/niryo_robot_description/niryo_ned2_UwU.urdf using Guid(297c3b5e35cc32640b91a230392cf381) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '732ddb5b7b984efd13c57e51144c0117') in 0.007725 seconds
 Number of updated asset objects reloaded before import = 0
 Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 8.428964 seconds.
-  path: Assets/URDF/niryo_ned2.transmission.xacro
-  artifactKey: Guid(13f0b7462078818429a0550c94dc14b9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2.transmission.xacro using Guid(13f0b7462078818429a0550c94dc14b9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '00ae79479f41e9cb58d89eea9522bd4f') in 0.000714 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 1.666185 seconds.
-  path: Assets/URDF/niryo_ned2.urdf.xacro
-  artifactKey: Guid(a8e0ee38854b43948832cb4abf0d3f92) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2.urdf.xacro using Guid(a8e0ee38854b43948832cb4abf0d3f92) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '760d532ddb52b9a601486331b1210de3') in 0.000719 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 0.683282 seconds.
-  path: Assets/URDF/niryo_ned2.urdf.local.xacro
-  artifactKey: Guid(ecb1c2e2679535844860795c3ec1701c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2.urdf.local.xacro using Guid(ecb1c2e2679535844860795c3ec1701c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7afedcf6aeadbc5f7e4ff14c327d5ef6') in 0.000674 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 0.718180 seconds.
-  path: Assets/URDF/niryo_ned2_camera.urdf.xacro
-  artifactKey: Guid(e59ff6739c2a46f449f56aad7588d2fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2_camera.urdf.xacro using Guid(e59ff6739c2a46f449f56aad7588d2fa) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ae613c040e12c1a9bdf623177072f34e') in 0.000735 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 1.192980 seconds.
-  path: Assets/URDF/niryo_ned2_camera.urdf.local.xacro
-  artifactKey: Guid(fcf3c2b265acdb043a5290b233f3b1f7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2_camera.urdf.local.xacro using Guid(fcf3c2b265acdb043a5290b233f3b1f7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '150f397cb13c4337527b857c375f939c') in 0.000717 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 0.984576 seconds.
-  path: Assets/URDF/niryo_ned2_gazebo.urdf.xacro
-  artifactKey: Guid(3466624a1eb9e6f4e8c1a322136b48e0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2_gazebo.urdf.xacro using Guid(3466624a1eb9e6f4e8c1a322136b48e0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b8003e469d459303d2b0d4cbd76701bc') in 0.000817 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 1.193622 seconds.
-  path: Assets/URDF/niryo_ned2_gazebo.urdf.local.xacro
-  artifactKey: Guid(1a788d3de8614af4da05888902ae3f58) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2_gazebo.urdf.local.xacro using Guid(1a788d3de8614af4da05888902ae3f58) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8946e4f02405267de72ba970767135f1') in 0.000893 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 1.322743 seconds.
-  path: Assets/URDF/niryo_ned2_gripper1_n_camera.urdf.xacro
-  artifactKey: Guid(9e67d41e1e0d4af489b9b99e0ea15ca4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2_gripper1_n_camera.urdf.xacro using Guid(9e67d41e1e0d4af489b9b99e0ea15ca4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1a99c9940188148e61534d869a9a22cf') in 0.000729 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 1.027351 seconds.
-  path: Assets/URDF/niryo_ned2_gripper1_n_camera.urdf.local.xacro
-  artifactKey: Guid(4f82eaca0b0040b4e8e9d7418382b234) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2_gripper1_n_camera.urdf.local.xacro using Guid(4f82eaca0b0040b4e8e9d7418382b234) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '81035c2d889873c7d74766cec54ccf9c') in 0.000841 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 0.843055 seconds.
-  path: Assets/URDF/niryo_ned2_param.urdf.urdf
-  artifactKey: Guid(9a18dba3c4f8a6a449c5a6e1c5fe6409) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2_param.urdf.urdf using Guid(9a18dba3c4f8a6a449c5a6e1c5fe6409) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '21a6ad28549159438392406335248c7c') in 0.000864 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 8.693530 seconds.
-  path: Assets/URDF/niryo_ned2_param.urdf.xacro
-  artifactKey: Guid(46306e42b1e9c344d90d05d6239bab1f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_ned2_param.urdf.xacro using Guid(46306e42b1e9c344d90d05d6239bab1f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '17dc3bdd5a941085a7dbeb02b0e9b811') in 0.001195 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 0.685392 seconds.
-  path: Assets/URDF/without_mesh_niryo_ned2.urdf.xacro
-  artifactKey: Guid(57360d6c75609fd49983d41d42dde1a1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/without_mesh_niryo_ned2.urdf.xacro using Guid(57360d6c75609fd49983d41d42dde1a1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '43d4ad774e2459c32967fa5e83b5a152') in 0.000704 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 1.375408 seconds.
-  path: Assets/URDF/without_mesh_niryo_ned2.urdf.local.xacro
-  artifactKey: Guid(eb8331558aa04954da419a6ee23ee26b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/without_mesh_niryo_ned2.urdf.local.xacro using Guid(eb8331558aa04954da419a6ee23ee26b) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ed54278ef132095325892cdd791924b5') in 0.000766 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 7417.192656 seconds.
-  path: Assets/URDF/1- BASE - V1.STL
-  artifactKey: Guid(906493f4cec611448afb0ad22a48e6bf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/1- BASE - V1.STL using Guid(906493f4cec611448afb0ad22a48e6bf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bfba0206155eadb1c2c695b680b1a710') in 0.016603 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 1
-========================================================================
-Received Import Request.
-  Time since last request: 214.041321 seconds.
-  path: Assets/URDF/stl
-  artifactKey: Guid(9d1c93af9ae253642a07c1a13424e85e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/stl using Guid(9d1c93af9ae253642a07c1a13424e85e) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '4d5f5c380d1151b822862497790fbacf') in 0.000768 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 7.618390 seconds.
-  path: Assets/URDF/meshes
-  artifactKey: Guid(32d619f97037a8847b625ee4da2b3e37) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/meshes using Guid(32d619f97037a8847b625ee4da2b3e37) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '549341a1057666f1955117ce238576cd') in 0.000701 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 889.104530 seconds.
-  path: Assets/URDF/New Folder
-  artifactKey: Guid(56eb46f2fe50bc34790a316b462de916) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/New Folder using Guid(56eb46f2fe50bc34790a316b462de916) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f6d8ddf5abffc8f9d96a3e76ee8020d1') in 0.001235 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 4.525679 seconds.
-  path: Assets/URDF/niryo_robot_description
-  artifactKey: Guid(56eb46f2fe50bc34790a316b462de916) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/URDF/niryo_robot_description using Guid(56eb46f2fe50bc34790a316b462de916) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '78aefda7933ce6207bda5cdc4de03aae') in 0.000750 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 90.758286 seconds.
-  path: Assets/niryo_robot_description
-  artifactKey: Guid(c83f5b9de64c0504490ba0044e5d3ee4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description using Guid(c83f5b9de64c0504490ba0044e5d3ee4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'cfd69ada467cb74de300b3ec924b514e') in 0.000835 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 37.354750 seconds.
-  path: Assets/niryo_robot_description/urdf
-  artifactKey: Guid(45cb057e8709eba458baa0d1d4a92edf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/urdf using Guid(45cb057e8709eba458baa0d1d4a92edf) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '521b3924381f67d7fe002143b5d007fa') in 0.000550 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 8.239846 seconds.
-  path: Assets/niryo_robot_description/New Folder
-  artifactKey: Guid(456e94705c958144fa25ff54ec06f0e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/New Folder using Guid(456e94705c958144fa25ff54ec06f0e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '8a83d509aa63268e39196fbade5610ad') in 0.000766 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 4.221490 seconds.
-  path: Assets/niryo_robot_description/meshes
-  artifactKey: Guid(456e94705c958144fa25ff54ec06f0e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes using Guid(456e94705c958144fa25ff54ec06f0e1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '22b6833e9a90097c69d9cac8294400aa') in 0.000660 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 11.676376 seconds.
-  path: Assets/niryo_robot_description/urdf/ned2
-  artifactKey: Guid(979d500991fdc5947a1f48abd0c70d41) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/urdf/ned2 using Guid(979d500991fdc5947a1f48abd0c70d41) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '6d87b78e3a10443bcf449ab300b7c7da') in 0.000471 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 43.533438 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2
-  artifactKey: Guid(fd9d74a9a4601c04992e321dd86edfca) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2 using Guid(fd9d74a9a4601c04992e321dd86edfca) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'cd8dccca48dfe6d6930db5011a8ba146') in 0.000431 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 19.011632 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/stl
-  artifactKey: Guid(b6ea9a77619a9524a91492974cfcfd80) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/stl using Guid(b6ea9a77619a9524a91492974cfcfd80) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'cea860ef64e14077201c0dd328b9df8f') in 0.000568 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 5.966887 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/collada
-  artifactKey: Guid(a05b02ef1b5311543a77635cbb46619f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/collada using Guid(a05b02ef1b5311543a77635cbb46619f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b047770bdf6d3fd7cb7f79fad8e25c60') in 0.000471 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 0
-========================================================================
-Received Import Request.
-  Time since last request: 292.540043 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/collada/arm_link.dae
-  artifactKey: Guid(7a3b639e439344f4a9ba9f2f0e953304) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/collada/arm_link.dae using Guid(7a3b639e439344f4a9ba9f2f0e953304) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0bb8e4fd1cfb50cbd37e2fcae4e7dffe') in 0.269628 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 26
-========================================================================
-Received Import Request.
-  Time since last request: 0.000030 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/collada/hand_link.dae
-  artifactKey: Guid(c61d738c8b3114942ae61d7d58c5374f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/collada/hand_link.dae using Guid(c61d738c8b3114942ae61d7d58c5374f) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c5fc1c108f29b0bbcda841e16ad4ed5d') in 0.038255 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 18
-========================================================================
-Received Import Request.
-  Time since last request: 0.000029 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/collada/shoulder_link.dae
-  artifactKey: Guid(33686d7214381e643852ae1d3cad447a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/collada/shoulder_link.dae using Guid(33686d7214381e643852ae1d3cad447a) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '94146a36aec8b4aef616f6b8cdf921e0') in 0.036460 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 20
-========================================================================
-Received Import Request.
-  Time since last request: 0.000017 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/collada/elbow_link.dae
-  artifactKey: Guid(3d7e1fe0029684643a5162b31fe6dbf5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/collada/elbow_link.dae using Guid(3d7e1fe0029684643a5162b31fe6dbf5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0a4525f4ea6ef67f2321d827029f26c8') in 0.036997 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 20
-Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
-TcpMessagingSession - receive error
-AssetImportWorkerClient::OnTransportError - code=2 error=End of file
-AssetImportWorker is now disconnected from the server
-Process exiting
-Exiting without the bug reporter. Application will terminate with return code 0
