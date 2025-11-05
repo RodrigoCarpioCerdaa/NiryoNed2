@@ -12,9 +12,9 @@ robot_state = {
 state_lock = threading.Lock()
 
 # Posición "Home" (en grados)
-HOME_POSE = [0.0, 0.0, 0.0, 0.0, -90.0, 0.0]
+HOME_POSE = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 # Posición "Descanso" (ejemplo)
-REST_POSE = [0.0, 45.0, -90.0, 0.0, 0.0, 0.0]
+REST_POSE = [30.0, 30.0, -90.0, 0.0, 0.0, 0.0]
 
 
 # --- El Servidor Flask ---
