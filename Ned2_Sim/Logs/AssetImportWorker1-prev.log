@@ -15,7 +15,7 @@ C:/Users/Usuario/Ned2_Sim
 -logFile
 Logs/AssetImportWorker1.log
 -srvPort
-56516
+59019
 Successfully changed project path to: C:/Users/Usuario/Ned2_Sim
 C:/Users/Usuario/Ned2_Sim
 [UnityMemory] Configuration Parameters - Can be set up in boot.config
@@ -49,12 +49,12 @@ C:/Users/Usuario/Ned2_Sim
     "memorysetup-temp-allocator-size-cloud-worker=32768"
     "memorysetup-temp-allocator-size-gi-baking-worker=262144"
     "memorysetup-temp-allocator-size-gfx=262144"
-Player connection [11696] Host "[IP] 172.29.160.1 [Port] 0 [Flags] 2 [Guid] 2961640376 [EditorId] 2961640376 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-PDB7F9E) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
+Player connection [1428] Host "[IP] 172.22.144.1 [Port] 0 [Flags] 2 [Guid] 483466503 [EditorId] 483466503 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-PDB7F9E) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined multi-casting on [225.0.0.222:54997]...
 
-Player connection [11696] Host "[IP] 172.29.160.1 [Port] 0 [Flags] 2 [Guid] 2961640376 [EditorId] 2961640376 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-PDB7F9E) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
+Player connection [1428] Host "[IP] 172.22.144.1 [Port] 0 [Flags] 2 [Guid] 483466503 [EditorId] 483466503 [Version] 1048832 [Id] WindowsEditor(7,DESKTOP-PDB7F9E) [Debug] 1 [PackageName] WindowsEditor [ProjectName] Editor" joined alternative multi-casting on [225.0.0.222:34997]...
 
 [Physics::Module] Initialized MultithreadedJobDispatcher with 15 workers.
-Refreshing native plugins compatible for Editor in 7.51 ms, found 5 plugins.
+Refreshing native plugins compatible for Editor in 2007.00 ms, found 5 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Initialize engine version: 2022.3.20f1 (61c2feb0970d)
 [Subsystems] Discovering subsystems at path C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/Resources/UnitySubsystems
@@ -70,51 +70,51 @@ Initialize mono
 Mono path[0] = 'C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/Managed'
 Mono path[1] = 'C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/MonoBleedingEdge/lib/mono/unityjit-win32'
 Mono config path = 'C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/MonoBleedingEdge/etc'
-Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56744
+Using monoOptions --debugger-agent=transport=dt_socket,embedding=1,server=y,suspend=n,address=127.0.0.1:56860
 Begin MonoManager ReloadAssembly
 Registering precompiled unity dll's ...
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/PlaybackEngines/AndroidPlayer/UnityEditor.Android.Extensions.dll
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/PlaybackEngines/iOSSupport/UnityEditor.iOS.Extensions.dll
 Register platform support module: C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/PlaybackEngines/WindowsStandaloneSupport/UnityEditor.WindowsStandalone.Extensions.dll
-Registered in 0.005912 seconds.
-- Loaded All Assemblies, in  0.265 seconds
+Registered in 0.511498 seconds.
+- Loaded All Assemblies, in  7.633 seconds
 Native extension for WindowsStandalone target not found
 [usbmuxd] Start listen thread
 [usbmuxd] Listen thread started
 Native extension for iOS target not found
 Native extension for Android target not found
-Android Extension - Scanning For ADB Devices 192 ms
+Android Extension - Scanning For ADB Devices 185 ms
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.460 seconds
-Domain Reload Profiling: 725ms
-	BeginReloadAssembly (79ms)
+- Finished resetting the current domain, in  0.636 seconds
+Domain Reload Profiling: 8268ms
+	BeginReloadAssembly (5724ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (0ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
 		CreateAndSetChildDomain (1ms)
-	RebuildCommonClasses (25ms)
-	RebuildNativeTypeToScriptingClass (7ms)
-	initialDomainReloadingComplete (44ms)
-	LoadAllAssembliesAndSetupDomain (108ms)
-		LoadAssemblies (79ms)
+	RebuildCommonClasses (194ms)
+	RebuildNativeTypeToScriptingClass (6ms)
+	initialDomainReloadingComplete (551ms)
+	LoadAllAssembliesAndSetupDomain (1156ms)
+		LoadAssemblies (5723ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (106ms)
-			TypeCache.Refresh (105ms)
-				TypeCache.ScanAssembly (95ms)
+		AnalyzeDomain (1154ms)
+			TypeCache.Refresh (1153ms)
+				TypeCache.ScanAssembly (1143ms)
 			ScanForSourceGeneratedMonoScriptInfo (0ms)
 			ResolveRequiredComponents (0ms)
-	FinalizeReload (461ms)
+	FinalizeReload (636ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (417ms)
+		SetupLoadedEditorAssemblies (594ms)
 			LogAssemblyErrors (0ms)
-			InitializePlatformSupportModulesInManaged (292ms)
+			InitializePlatformSupportModulesInManaged (454ms)
 			SetLoadedEditorAssemblies (3ms)
 			RefreshPlugins (0ms)
 			BeforeProcessingInitializeOnLoad (2ms)
-			ProcessInitializeOnLoadAttributes (84ms)
-			ProcessInitializeOnLoadMethodAttributes (36ms)
+			ProcessInitializeOnLoadAttributes (88ms)
+			ProcessInitializeOnLoadMethodAttributes (48ms)
 			AfterProcessingInitializeOnLoad (0ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
@@ -122,53 +122,53 @@ Domain Reload Profiling: 725ms
 ========================================================================
 Worker process is ready to serve import requests
 Begin MonoManager ReloadAssembly
-- Loaded All Assemblies, in  0.462 seconds
-Refreshing native plugins compatible for Editor in 2.77 ms, found 5 plugins.
+- Loaded All Assemblies, in  6.881 seconds
+Refreshing native plugins compatible for Editor in 2.57 ms, found 5 plugins.
 Native extension for WindowsStandalone target not found
 Native extension for iOS target not found
 Native extension for Android target not found
 Mono: successfully reloaded assembly
-- Finished resetting the current domain, in  0.405 seconds
-Domain Reload Profiling: 866ms
-	BeginReloadAssembly (99ms)
+- Finished resetting the current domain, in  0.415 seconds
+Domain Reload Profiling: 7294ms
+	BeginReloadAssembly (94ms)
 		ExecutionOrderSort (0ms)
 		DisableScriptedObjects (3ms)
 		BackupInstance (0ms)
 		ReleaseScriptingObjects (0ms)
-		CreateAndSetChildDomain (16ms)
+		CreateAndSetChildDomain (15ms)
 	RebuildCommonClasses (23ms)
-	RebuildNativeTypeToScriptingClass (7ms)
-	initialDomainReloadingComplete (29ms)
-	LoadAllAssembliesAndSetupDomain (302ms)
-		LoadAssemblies (229ms)
+	RebuildNativeTypeToScriptingClass (6ms)
+	initialDomainReloadingComplete (28ms)
+	LoadAllAssembliesAndSetupDomain (6728ms)
+		LoadAssemblies (6413ms)
 		RebuildTransferFunctionScriptingTraits (0ms)
-		AnalyzeDomain (130ms)
-			TypeCache.Refresh (113ms)
-				TypeCache.ScanAssembly (103ms)
-			ScanForSourceGeneratedMonoScriptInfo (12ms)
-			ResolveRequiredComponents (4ms)
-	FinalizeReload (406ms)
+		AnalyzeDomain (371ms)
+			TypeCache.Refresh (355ms)
+				TypeCache.ScanAssembly (343ms)
+			ScanForSourceGeneratedMonoScriptInfo (11ms)
+			ResolveRequiredComponents (3ms)
+	FinalizeReload (415ms)
 		ReleaseScriptCaches (0ms)
 		RebuildScriptCaches (0ms)
-		SetupLoadedEditorAssemblies (287ms)
+		SetupLoadedEditorAssemblies (307ms)
 			LogAssemblyErrors (0ms)
 			InitializePlatformSupportModulesInManaged (24ms)
 			SetLoadedEditorAssemblies (2ms)
 			RefreshPlugins (0ms)
-			BeforeProcessingInitializeOnLoad (42ms)
-			ProcessInitializeOnLoadAttributes (199ms)
+			BeforeProcessingInitializeOnLoad (41ms)
+			ProcessInitializeOnLoadAttributes (221ms)
 			ProcessInitializeOnLoadMethodAttributes (16ms)
 			AfterProcessingInitializeOnLoad (4ms)
 			EditorAssembliesLoaded (0ms)
 		ExecutionOrderSort2 (0ms)
 		AwakeInstancesAfterBackupRestoration (5ms)
 Launched and connected shader compiler UnityShaderCompiler.exe after 0.03 seconds
-Refreshing native plugins compatible for Editor in 2.75 ms, found 5 plugins.
+Refreshing native plugins compatible for Editor in 3.47 ms, found 5 plugins.
 Preloading 0 native plugins for Editor in 0.00 ms.
 Unloading 3717 Unused Serialized files (Serialized files now loaded: 0)
-Unloading 47 unused Assets / (102.2 KB). Loaded Objects now: 4174.
+Unloading 47 unused Assets / (102.1 KB). Loaded Objects now: 4174.
 Memory consumption went from 147.0 MB to 146.9 MB.
-Total: 2.693800 ms (FindLiveObjects: 0.195800 ms CreateObjectMapping: 0.085600 ms MarkObjects: 2.305500 ms  DeleteObjects: 0.105900 ms)
+Total: 2.457200 ms (FindLiveObjects: 0.182200 ms CreateObjectMapping: 0.129100 ms MarkObjects: 2.041400 ms  DeleteObjects: 0.103700 ms)
 
 AssetImportParameters requested are different than current active one (requested -> active):
   custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
@@ -184,33 +184,3 @@ AssetImportParameters requested are different than current active one (requested
   custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
-========================================================================
-Received Import Request.
-  Time since last request: 17920.703820 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/collada/base_link.dae
-  artifactKey: Guid(0f8aaf90cecb97047abb87629a482740) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/collada/base_link.dae using Guid(0f8aaf90cecb97047abb87629a482740) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '1b34d0f806cd6badc68e7257263ded52') in 0.302173 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 44
-========================================================================
-Received Import Request.
-  Time since last request: 0.000209 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/collada/wrist_link.dae
-  artifactKey: Guid(7beb9deaad702b84fbab2d4503a411e0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/collada/wrist_link.dae using Guid(7beb9deaad702b84fbab2d4503a411e0) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '482f9b3b45716fc0d36b96f8aecaa935') in 0.044880 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 26
-========================================================================
-Received Import Request.
-  Time since last request: 0.000036 seconds.
-  path: Assets/niryo_robot_description/meshes/ned2/collada/forearm_link.dae
-  artifactKey: Guid(505557b853b32294bbc1e68dae8badd7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
-Start importing Assets/niryo_robot_description/meshes/ned2/collada/forearm_link.dae using Guid(505557b853b32294bbc1e68dae8badd7) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'c00de3884e917535639507144f39d763') in 0.061947 seconds
-Number of updated asset objects reloaded before import = 0
-Number of asset objects unloaded after import = 38
-Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
-TcpMessagingSession - receive error
-AssetImportWorkerClient::OnTransportError - code=2 error=End of file
-AssetImportWorker is now disconnected from the server
-Process exiting
-Exiting without the bug reporter. Application will terminate with return code 0
