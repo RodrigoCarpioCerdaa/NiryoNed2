@@ -1,96 +1,82 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+import ikpy.chain
+import numpy as np
 import threading
 import time
 
-# --- Estado Simulado del Robot ---
-# Mantenemos el estado de las 6 articulaciones (en grados)
-# Usamos un Lock para evitar problemas si Unity pide el estado
-# justo cuando lo estamos cambiando.
-robot_state = {
-    "joints": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-}
-state_lock = threading.Lock()
+# --- CONFIGURACIÓN ---
+# NOMBRE DEL ARCHIVO URDF (¡Tiene que estar en la misma carpeta!)
+URDF_FILE = "niryo_ned2_UwU.urdf" 
 
-# Posición "Home" (en grados)
-HOME_POSE = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-# Posición "Descanso" (ejemplo)
-REST_POSE = [30.0, 30.0, -90.0, 0.0, 0.0, 0.0]
+# Cargamos la cadena cinemática del robot
+# active_links_mask le dice qué articulaciones se mueven (True) y cuáles son fijas (False)
+# Para un brazo de 6 ejes suele ser [False, True, True, True, True, True, True, False...]
+# Dejamos que ikpy lo intente adivinar primero, o lo ajustamos luego.
+try:
+    my_chain = ikpy.chain.Chain.from_urdf_file(URDF_FILE)
+    print(f"✅ Robot cargado desde {URDF_FILE}")
+    print("Links activos:", my_chain.links)
+except Exception as e:
+    print(f"❌ ERROR: No encuentro el archivo {URDF_FILE}. Asegúrate de ponerlo en la carpeta.")
+    print(f"Error detalle: {e}")
+    my_chain = None
 
-
-# --- El Servidor Flask ---
 app = Flask(__name__)
 
-def simulate_move(target_joints, duration_sec=2.0):
-    """
-    Esta función se ejecuta en un hilo (thread) para
-    simular un movimiento suave sin bloquear el servidor.
-    """
-    global robot_state
-    steps = int(duration_sec / 0.05) # 20 pasos por segundo
-    
-    with state_lock:
-        start_joints = list(robot_state["joints"]) # Copia del estado actual
-
-    if steps == 0:
-        with state_lock:
-            robot_state["joints"] = target_joints
-        return
-
-    for i in range(1, steps + 1):
-        progress = i / float(steps)
-        current_step_joints = []
-        for j in range(6):
-            # Interpolación lineal simple (lerp)
-            start = start_joints[j]
-            end = target_joints[j]
-            lerp_val = start + (end - start) * progress
-            current_step_joints.append(lerp_val)
-        
-        with state_lock:
-            robot_state["joints"] = current_step_joints
-        
-        time.sleep(0.05) # Espera 50ms
-
-    print(f"Movimiento a {target_joints} completado.")
-
-
-# --- Rutas de la API ---
+# Estado actual del robot (Ángulos en grados)
+current_joints_deg = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+state_lock = threading.Lock()
 
 @app.route('/get_state', methods=['GET'])
 def get_state():
-    """
-    Unity llamará a esta ruta en cada fotograma.
-    Devuelve el estado actual de las articulaciones.
-    """
     with state_lock:
-        return jsonify(robot_state)
+        # Devolvemos solo los primeros 6 ángulos (o los necesarios para Unity)
+        # Unity espera array de floats
+        return jsonify({"joints": current_joints_deg})
 
-@app.route('/home', methods=['POST'])
-def move_home():
-    """
-    Unity llama a esta ruta para iniciar el movimiento a Home.
-    """
-    print("Recibida petición: Mover a Home")
-    # Creamos un hilo para no bloquear la respuesta
-    # El hilo ejecutará la función 'simulate_move'
-    move_thread = threading.Thread(target=simulate_move, args=(HOME_POSE,))
-    move_thread.start()
-    return "OK: Moviendo a Home", 200
+@app.route('/calculate_ik', methods=['POST'])
+def calculate_ik():
+    global current_joints_deg
+    
+    if my_chain is None:
+        return "Error: No hay URDF cargado", 500
 
-@app.route('/rest', methods=['POST'])
-def move_rest():
-    """
-    Ruta de ejemplo para mover a otra posición
-    """
-    print("Recibida petición: Mover a Descanso")
-    move_thread = threading.Thread(target=simulate_move, args=(REST_POSE,))
-    move_thread.start()
-    return "OK: Moviendo a Descanso", 200
+    try:
+        data = request.get_json()
+        x = float(data.get("x", 0.3))
+        y = float(data.get("y", 0.0))
+        z = float(data.get("z", 0.2))
+        
+        print(f"🎯 Calculando IK para ir a: [{x}, {y}, {z}]")
 
+        # --- LA MAGIA DE LA CINEMÁTICA INVERSA ---
+        # Target: Posición X, Y, Z. 
+        # orientation_mode=None deja que el robot elija la orientación más fácil
+        target_position = [x, y, z]
+        
+        # Calculamos (devuelve radianes)
+        ik_solution_rad = my_chain.inverse_kinematics(target_position)
+        
+        # Convertimos a Grados
+        ik_solution_deg = np.degrees(ik_solution_rad).tolist()
+        
+        # ikpy suele devolver una lista que incluye la "Base" estática al principio.
+        # Normalmente los motores son el índice 1, 2, 3, 4, 5, 6.
+        # Recortamos para quedarnos con los 6 motores.
+        # (Ajusta este recorte si ves que te sobra o falta alguno)
+        final_joints = ik_solution_deg[1:7] 
 
-# --- ARRANQUE DEL SERVIDOR ---
+        print(f"📐 Solución hallada (Grados): {final_joints}")
+
+        with state_lock:
+            current_joints_deg = final_joints
+
+        return jsonify({"joints": final_joints, "status": "moved"}), 200
+
+    except Exception as e:
+        print(f"Error calculando IK: {e}")
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == '__main__':
-    print("Iniciando servidor de simulación del Ned 2 en http://127.0.0.1:5000")
-    # Corremos en 'localhost' (127.0.0.1) porque solo Unity (en el mismo PC)
-    # necesita conectarse
-    app.run(host='127.0.0.1', port=5000, debug=False)
+    print("🤖 Servidor IK listo en puerto 5000")
+    app.run(host='0.0.0.0', port=5000)
