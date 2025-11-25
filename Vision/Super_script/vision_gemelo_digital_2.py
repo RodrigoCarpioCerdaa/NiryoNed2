@@ -66,7 +66,7 @@ try:
         if frame is None: continue
         
         # Girar imagen (Unity suele enviarla invertida verticalmente)
-        frame = cv2.flip(frame, 0) 
+        frame = cv2.flip(frame, 1) 
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # --- B. DETECCIÓN ---
@@ -74,55 +74,78 @@ try:
         
         objeto_encontrado = False
 
-        if ids is not None:
-            # Procesamos el primer marcador encontrado como la "pieza"
-            for i, marker_id in enumerate(ids):
-                # 1. Calcular Centro
-                c = corners[i][0]
-                cx = (c[0][0] + c[1][0] + c[2][0] + c[3][0]) / 4
-                cy = (c[0][1] + c[1][1] + c[2][1] + c[3][1]) / 4
-                
-                # 2. Calcular Ángulo
-                angulo = calcular_angulo(c[0], c[1])
+        # LISTA BLANCA: Solo haremos caso a estos IDs
+        # ID 1 = Pieza Verde, ID 2 = Pieza Roja
+        DICCIONARIO_PIEZAS = {
+            1: "Verde",
+            2: "Rojo"
+        }
 
-                # 3. Aplicar Homografía (si existe)
-                # Convertimos a float estándar de Python para evitar errores de JSON
-                pos_x = float(cx)
-                pos_y = float(cy)
-                
-                if CALIBRADO:
-                    pixel_coords = np.array([[[pos_x, pos_y]]], dtype=np.float32)
-                    real_coords = cv2.perspectiveTransform(pixel_coords, HOMOGRAPHY_MATRIX)
+        if ids is not None:
+            # Dibujamos TODOS los marcadores (incluidos los de calibración) para que tú los veas
+            aruco.drawDetectedMarkers(frame, corners, ids)
+
+            # Pero solo PROCESAMOS y ENVIAMOS si es una pieza válida
+            for i, marker_id in enumerate(ids):
+                id_actual = int(marker_id[0])
+
+                # --- FILTRO: ¿Es este ID una pieza? ---
+                if id_actual in DICCIONARIO_PIEZAS:
                     
-                    # Extracción y conversión explícita a float
-                    rx = float(real_coords[0][0][0])
-                    ry = float(real_coords[0][0][1])
+                    # 1. Calcular Centro
+                    c = corners[i][0]
+                    cx = (c[0][0] + c[1][0] + c[2][0] + c[3][0]) / 4
+                    cy = (c[0][1] + c[1][1] + c[2][1] + c[3][1]) / 4
                     
-                    posicion_final = [round(rx, 2), round(ry, 2)]
-                else:
-                    posicion_final = [int(pos_x), int(pos_y)]
-                
-                # 4. Preparar JSON (Tipos corregidos)
-                datos = {
-                    "objeto_encontrado": True,
-                    "id_aruco": int(marker_id[0]),      # Convertir numpy.int a int
-                    "posicion": posicion_final,          # Lista de floats estándar
-                    "angulo": float(round(angulo, 2)),   # Convertir a float estándar
-                    "calibrado": CALIBRADO
-                }
-                
-                # 5. Enviar
-                mensaje_json = json.dumps(datos)
-                socket_datos.send_multipart([b"VisionData", mensaje_json.encode('utf-8')])
-                objeto_encontrado = True
-                
-                # Dibujar para visualización
-                aruco.drawDetectedMarkers(frame, corners, ids)
-                texto = f"ID:{marker_id[0]} Ang:{angulo:.1f}"
-                cv2.putText(frame, texto, (int(cx), int(cy) - 20), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                
-                break # Solo enviamos una pieza por fotograma
+                    # 2. Calcular Ángulo
+                    angulo = calcular_angulo(c[0], c[1])
+
+                    # 3. Aplicar Homografía
+                    pos_x, pos_y = float(cx), float(cy)
+                    
+                    if CALIBRADO:
+                        pixel_coords = np.array([[[pos_x, pos_y]]], dtype=np.float32)
+                        real_coords = cv2.perspectiveTransform(pixel_coords, HOMOGRAPHY_MATRIX)
+                        
+                        rx = float(real_coords[0][0][0])
+                        ry = float(real_coords[0][0][1])
+                        posicion_final = [round(rx, 2), round(ry, 2)]
+                    else:
+                        posicion_final = [int(pos_x), int(pos_y)]
+                    
+                    # 4. Preparar JSON
+                    color_pieza = DICCIONARIO_PIEZAS[id_actual]
+                    
+                    datos = {
+                        "objeto_encontrado": True,
+                        "id_aruco": id_actual,
+                        "forma": "Cubo" if id_actual == 2 else "Cilindro",
+                        "color": color_pieza,
+                        "posicion": posicion_final,
+                        "angulo": float(round(angulo, 2)),
+                        "calibrado": CALIBRADO
+                    }
+                    
+                    # 5. Enviar
+                    mensaje_json = json.dumps(datos)
+                    socket_datos.send_multipart([b"VisionData", mensaje_json.encode('utf-8')])
+                    objeto_encontrado = True
+                    
+                    # --- VISUALIZACIÓN COMPLETA (CORREGIDA) ---
+                    
+                    # Línea 1: Qué es (Rojo)
+                    texto_id = f"TARGET: {color_pieza} (ID {id_actual})"
+                    cv2.putText(frame, texto_id, (int(cx), int(cy) - 40), 
+                               cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+
+                    # Línea 2: Dónde está (Verde) - ¡ESTO ES LO QUE TE FALTABA!
+                    texto_datos = f"Pos: {posicion_final} | Ang: {angulo:.1f}"
+                    cv2.putText(frame, texto_datos, (int(cx) - 60, int(cy) - 15), 
+                               cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    
+                    print(f"📡 ENVIANDO: {texto_id} | {texto_datos}")
+                    
+                    break # Solo enviamos una pieza por fotograma
 
         # Si no se encuentra nada, avisar a Unity
         if not objeto_encontrado:
