@@ -363,7 +363,12 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/2022.3.20f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 "Assets/Scripts/CameraStreamer.cs"
+"Assets/Scripts/CintaVisualScroller.cs"
+"Assets/Scripts/ConveyorEstadoGlobal.cs"
+"Assets/Scripts/MovimientoPieza.cs"
 "Assets/Scripts/RobotController.cs"
+"Assets/Scripts/SensorParada.cs"
+"Assets/Scripts/SpawnerSimple.cs"
 "Assets/Scripts/UnityMainThreadDispatcher.cs"
 "Assets/Scripts/VisionData.cs"
 -langversion:9.0
