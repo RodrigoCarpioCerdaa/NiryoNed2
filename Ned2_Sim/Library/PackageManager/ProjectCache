@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638973296825300560
-    m_Hash: 379939965
+      ticks: 638997381975438242
+    m_Hash: 2650907486
   m_LockFileStatus:
     m_FilePath: C:/NiryoNed2/Ned2_Sim/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 638973296825356050
-    m_Hash: 1276184092
+      ticks: 638997381975448227
+    m_Hash: 1757111619
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_LocalPackages:
@@ -127,6 +127,8 @@ m_ResolvedPackages:
     - 2.9.2
     - 2.9.3
     - 2.10.0
+    - 2.10.1
+    - 2.10.2
     compatible:
     - 2.2.0
     - 2.3.1
@@ -142,6 +144,8 @@ m_ResolvedPackages:
     - 2.9.2
     - 2.9.3
     - 2.10.0
+    - 2.10.1
+    - 2.10.2
     recommended: 2.2.0
     deprecated: []
   dependencies: []
@@ -367,6 +371,7 @@ m_ResolvedPackages:
     - 6.0.5
     - 6.0.6
     - 6.0.7
+    - 6.0.8
     compatible:
     - 5.2.2
     - 5.2.3

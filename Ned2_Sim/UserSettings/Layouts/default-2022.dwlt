@@ -366,7 +366,7 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_LockTracker:
     m_IsLocked: 0
-  m_LastSelectedObjectID: 24918
+  m_LastSelectedObjectID: 25078
 --- !u!114 &15
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -403,10 +403,10 @@ MonoBehaviour:
     m_OverlaysVisible: 1
   m_SceneHierarchy:
     m_TreeViewState:
-      scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: 
-      m_LastClickedID: 0
-      m_ExpandedIDs: 30fbffff
+      scrollPos: {x: 0, y: 92.399994}
+      m_SelectedIDs: f6610000
+      m_LastClickedID: 25078
+      m_ExpandedIDs: 30fbffffc2610000c6610000e4610000266200002c620000486200006c6200008c620000aa620000ce620000f6620000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
