@@ -366,7 +366,7 @@
 "Assets/Scripts/CintaVisualScroller.cs"
 "Assets/Scripts/ConveyorEstadoGlobal.cs"
 "Assets/Scripts/MovimientoPieza.cs"
-"Assets/Scripts/RobotController.cs"
+"Assets/Scripts/RobotTester.cs"
 "Assets/Scripts/SensorParada.cs"
 "Assets/Scripts/SimRobotController.cs"
 "Assets/Scripts/SpawnerSimple.cs"

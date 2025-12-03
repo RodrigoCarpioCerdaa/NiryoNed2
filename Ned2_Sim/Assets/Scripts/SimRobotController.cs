@@ -1,179 +1,90 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Text;
 using System.Globalization;
 
 [System.Serializable]
 public class RobotState
 {
-    public float[] joints;
+    public float[] joints; // Los 6 ángulos que manda Python
 }
 
 public class SimRobotController : MonoBehaviour
 {
     [Header("🔌 Conexión")]
     public string serverUrl = "http://127.0.0.1:5000";
-    public float pollInterval = 0.05f;
+    public float pollInterval = 0.05f; // 20 veces por segundo
 
-    [Header("🤖 Configuración del Robot")]
-    // IMPORTANTE: Recuerda configurar aquí los Pivotes y los Ejes en el Inspector
-    // Base(Y=1), Hombro(Z=1), Codo(Z=1), Antebrazo(X=1), Muñeca(Z=1), Mano(X=1)
-    public Transform[] jointTransforms;
-    public Vector3[] jointAxes;
+    [Header("🤖 Configuración Visual")]
+    public Transform[] jointTransforms; // Arrastra tus pivotes aquí
+    public Vector3[] jointAxes;         // Configura tus ejes (Z=1, etc)
+    public float smoothing = 20f;       // Velocidad de suavizado
 
-    [Header("📍 Control Tiempo Real")]
-    public Transform targetGhost;
-    public bool followTarget = false;
-    public float smoothing = 10f;
-
-    private RobotState currentState = new RobotState();
-    private bool isConnected = false;
-    private float lastIKRequestTime = 0;
+    // Estado interno
+    private RobotState currentState = null;
 
     void Start()
     {
-        StartCoroutine(InitializeServer());
+        Debug.Log("🚀 SimRobotController INICIADO. Empezando a escuchar al servidor...");
+        // Arrancamos el bucle infinito inmediatamente. Sin esperas.
+        StartCoroutine(PollLoop());
     }
 
-    // --- 1. CONEXIÓN INICIAL ---
-    IEnumerator InitializeServer()
+    // --- 1. BUCLE DE ESCUCHA INFINITO ---
+    IEnumerator PollLoop()
     {
-        Debug.Log("🚀 Iniciando sincronización...");
-        float[] startingJoints = new float[jointTransforms.Length];
-        for (int i = 0; i < jointTransforms.Length; i++)
+        while (true)
         {
-            if (jointTransforms[i] != null)
-                startingJoints[i] = GetAngleFromAxis(jointTransforms[i], jointAxes[i]);
-        }
-
-        RobotState initState = new RobotState();
-        initState.joints = startingJoints;
-        string jsonToSend = JsonUtility.ToJson(initState);
-
-        using (UnityWebRequest www = new UnityWebRequest(serverUrl + "/set_home", "POST"))
-        {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(jsonToSend);
-            www.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            www.downloadHandler = new DownloadHandlerBuffer();
-            www.SetRequestHeader("Content-Type", "application/json");
-
-            yield return www.SendWebRequest();
-
-            if (www.result == UnityWebRequest.Result.Success)
-            {
-                Debug.Log("✅ Sincronización EXITOSA.");
-                isConnected = true;
-                StartCoroutine(PollRobotState());
-            }
-            else
-            {
-                Debug.LogError("❌ Error conexión Python: " + www.error);
-            }
-        }
-    }
-
-    // --- 2. BUCLE DE LECTURA ---
-    IEnumerator PollRobotState()
-    {
-        while (isConnected)
-        {
+            // Preguntamos al servidor: ¿Cómo debo estar?
             using (UnityWebRequest www = UnityWebRequest.Get(serverUrl + "/get_state"))
             {
                 yield return www.SendWebRequest();
+
                 if (www.result == UnityWebRequest.Result.Success)
                 {
-                    currentState = JsonUtility.FromJson<RobotState>(www.downloadHandler.text);
+                    // ¡Dato recibido! Lo guardamos
+                    string json = www.downloadHandler.text;
+                    currentState = JsonUtility.FromJson<RobotState>(json);
+                }
+                else
+                {
+                    // Si falla, no paramos. Solo avisamos y seguimos intentando.
+                    // (Comenta esta línea si te molesta el spam de errores cuando cierras Python)
+                    // Debug.LogWarning("⚠️ Esperando a Python... " + www.error);
                 }
             }
+
+            // Esperamos un poquito antes de preguntar otra vez
             yield return new WaitForSeconds(pollInterval);
         }
     }
 
-    // --- 3. MOVIMIENTO VISUAL ---
+    // --- 2. APLICAR MOVIMIENTO ---
     void Update()
     {
-        if (!isConnected) return;
+        // Si aún no hemos recibido datos válidos, no hacemos nada
+        if (currentState == null || currentState.joints == null) return;
 
-        // Mover articulaciones
-        if (currentState != null && currentState.joints != null)
+        // Seguridad: Asegurarnos de que tenemos los objetos asignados
+        int count = Mathf.Min(jointTransforms.Length, currentState.joints.Length);
+
+        for (int i = 0; i < count; i++)
         {
-            int count = Mathf.Min(jointTransforms.Length, currentState.joints.Length);
-            for (int i = 0; i < count; i++)
+            if (jointTransforms[i] != null)
             {
-                if (jointTransforms[i] != null)
-                {
-                    float targetAngle = currentState.joints[i];
-                    Quaternion targetRot = Quaternion.Euler(jointAxes[i] * targetAngle);
+                // Leemos el ángulo que manda Python
+                float targetAngle = currentState.joints[i];
 
-                    jointTransforms[i].localRotation = Quaternion.Slerp(
-                        jointTransforms[i].localRotation,
-                        targetRot,
-                        Time.deltaTime * smoothing
-                    );
-                }
+                // Calculamos la rotación en el eje que tú configuraste
+                Quaternion targetRot = Quaternion.Euler(jointAxes[i] * targetAngle);
+
+                // Aplicamos Slerp para que se mueva suavemente
+                jointTransforms[i].localRotation = Quaternion.Slerp(
+                    jointTransforms[i].localRotation,
+                    targetRot,
+                    Time.deltaTime * smoothing
+                );
             }
         }
-
-        // Tracking manual con la bola fantasma (si está activado)
-        if (followTarget && targetGhost != null)
-        {
-            if (Time.time - lastIKRequestTime > 0.05f)
-            {
-                lastIKRequestTime = Time.time;
-                // Envío con duración 0.0 para respuesta rápida
-                StartCoroutine(SendIKRequest(targetGhost.localPosition.x,
-                                             targetGhost.localPosition.y,
-                                             targetGhost.localPosition.z,
-                                             0.0f));
-            }
-        }
-    }
-
-    // --- 4. NUEVA FUNCIÓN PÚBLICA (Para el script de Visión) ---
-    // Esta es la que llama RobotController.cs
-    public void MoveToPosition(float x, float y, float z)
-    {
-        // Desactivamos el "Follow Target" manual para que no interfiera
-        followTarget = false;
-
-        // Enviamos la orden con una duración suave (ej. 0.5s o 1.0s) para que no sea un teletransporte
-        StartCoroutine(SendIKRequest(x, y, z, 0.5f));
-    }
-
-    // --- 5. ENVÍO AL SERVIDOR ---
-    IEnumerator SendIKRequest(float x, float y, float z, float duration)
-    {
-        // TRADUCTOR DE EJES (Unity -> Robot)
-        float robotX = z;
-        float robotY = -x;
-        float robotZ = y;
-
-        string json = string.Format(CultureInfo.InvariantCulture,
-            "{{\"x\":{0}, \"y\":{1}, \"z\":{2}, \"duration\":{3}}}",
-            robotX, robotY, robotZ, duration);
-
-        using (UnityWebRequest www = new UnityWebRequest(serverUrl + "/calculate_ik", "POST"))
-        {
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(json);
-            www.uploadHandler = new UploadHandlerRaw(bodyRaw);
-            www.downloadHandler = new DownloadHandlerBuffer();
-            www.SetRequestHeader("Content-Type", "application/json");
-
-            yield return www.SendWebRequest();
-        }
-    }
-
-    // --- UTILIDADES ---
-    float GetAngleFromAxis(Transform t, Vector3 axis)
-    {
-        float angle = 0;
-        if (Mathf.Abs(axis.x) > 0.5f) angle = t.localEulerAngles.x;
-        else if (Mathf.Abs(axis.y) > 0.5f) angle = t.localEulerAngles.y;
-        else if (Mathf.Abs(axis.z) > 0.5f) angle = t.localEulerAngles.z;
-
-        if (angle > 180) angle -= 360;
-        if (axis.x < -0.1f || axis.y < -0.1f || axis.z < -0.1f) angle = -angle;
-        return angle;
     }
 }
