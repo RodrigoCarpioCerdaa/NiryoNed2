@@ -20,13 +20,17 @@ public class SimRobotController : MonoBehaviour
     public Vector3[] jointAxes;         // Configura tus ejes (Z=1, etc)
     public float smoothing = 20f;       // Velocidad de suavizado
 
+    [Header("🕵️ Cotilleo (Debug)")]
+    public bool mostrarDatosEnConsola = true; // ¿Quieres ver los logs?
+    public bool soloImprimirSiCambia = true;  // Para no llenar la consola si está quieto
+
     // Estado interno
     private RobotState currentState = null;
+    private string ultimoJsonRecibido = ""; // Para comparar si ha cambiado
 
     void Start()
     {
         Debug.Log("🚀 SimRobotController INICIADO. Empezando a escuchar al servidor...");
-        // Arrancamos el bucle infinito inmediatamente. Sin esperas.
         StartCoroutine(PollLoop());
     }
 
@@ -35,26 +39,35 @@ public class SimRobotController : MonoBehaviour
     {
         while (true)
         {
-            // Preguntamos al servidor: ¿Cómo debo estar?
             using (UnityWebRequest www = UnityWebRequest.Get(serverUrl + "/get_state"))
             {
                 yield return www.SendWebRequest();
 
                 if (www.result == UnityWebRequest.Result.Success)
                 {
-                    // ¡Dato recibido! Lo guardamos
                     string json = www.downloadHandler.text;
+
+                    // --- EL CHIVATO ---
+                    if (mostrarDatosEnConsola)
+                    {
+                        // Si "soloSiCambia" está activo, solo imprimimos si el JSON es nuevo
+                        if (!soloImprimirSiCambia || json != ultimoJsonRecibido)
+                        {
+                            Debug.Log($"📥 RECIBIDO DE PYTHON: {json}");
+                            ultimoJsonRecibido = json;
+                        }
+                    }
+                    // ------------------
+
                     currentState = JsonUtility.FromJson<RobotState>(json);
                 }
                 else
                 {
-                    // Si falla, no paramos. Solo avisamos y seguimos intentando.
-                    // (Comenta esta línea si te molesta el spam de errores cuando cierras Python)
+                    // Error de conexión (silenciado para no molestar si apagas el server)
                     // Debug.LogWarning("⚠️ Esperando a Python... " + www.error);
                 }
             }
 
-            // Esperamos un poquito antes de preguntar otra vez
             yield return new WaitForSeconds(pollInterval);
         }
     }
@@ -62,23 +75,17 @@ public class SimRobotController : MonoBehaviour
     // --- 2. APLICAR MOVIMIENTO ---
     void Update()
     {
-        // Si aún no hemos recibido datos válidos, no hacemos nada
         if (currentState == null || currentState.joints == null) return;
 
-        // Seguridad: Asegurarnos de que tenemos los objetos asignados
         int count = Mathf.Min(jointTransforms.Length, currentState.joints.Length);
 
         for (int i = 0; i < count; i++)
         {
             if (jointTransforms[i] != null)
             {
-                // Leemos el ángulo que manda Python
                 float targetAngle = currentState.joints[i];
-
-                // Calculamos la rotación en el eje que tú configuraste
                 Quaternion targetRot = Quaternion.Euler(jointAxes[i] * targetAngle);
 
-                // Aplicamos Slerp para que se mueva suavemente
                 jointTransforms[i].localRotation = Quaternion.Slerp(
                     jointTransforms[i].localRotation,
                     targetRot,
