@@ -3,12 +3,12 @@ import ikpy.chain
 import numpy as np
 import threading
 import time
-import zmq  # <--- NUEVO: Para hablar con Visión
+import zmq
 import json
 
 # --- CONFIGURACIÓN ---
 URDF_FILE = "niryo_ned2_UWU.urdf"
-PUERTO_VISION = "5555"  # Puerto donde publica detector_piezas.py
+PUERTO_VISION = "5555"
 
 try:
     my_chain = ikpy.chain.Chain.from_urdf_file(URDF_FILE)
@@ -30,29 +30,10 @@ def interpolate_value(start, end, progress):
     return start + (end - start) * progress
 
 
-def simulate_move(target_joints, duration_sec=2.0):
-    global current_joints_deg
-    steps = int(duration_sec / 0.05)
-    with state_lock:
-        start_joints = list(current_joints_deg)
-
-    if len(start_joints) != len(target_joints): start_joints = [0.0] * 6
-
-    for i in range(1, steps + 1):
-        progress = i / float(steps)
-        current = []
-        for j in range(6):
-            current.append(interpolate_value(start_joints[j], target_joints[j], progress))
-        with state_lock:
-            current_joints_deg = current
-        time.sleep(0.05)
-
-
 def calcular_ik_interno(x, y, z):
     """ Función interna para calcular ángulos sin pasar por Flask """
     global current_joints_deg
 
-    # 1. Seeding
     with state_lock:
         snapshot = list(current_joints_deg)
 
@@ -61,11 +42,11 @@ def calcular_ik_interno(x, y, z):
     seed = [0] + snapshot + ([0] * max(0, padding))
     if len(seed) != num_links: seed = [0] * num_links
 
-    # 2. Cálculo
+    # initial_position ayuda a la continuidad del movimiento
     ik_rad = my_chain.inverse_kinematics([x, y, z], initial_position=np.radians(seed))
     ik_deg = np.degrees(ik_rad).tolist()
 
-    # 3. Corrección 180
+    # Corrección de ángulo visual (-180 a 180)
     base = ik_deg[1] + 180
     if base > 180:
         base -= 360
@@ -76,8 +57,7 @@ def calcular_ik_interno(x, y, z):
     return ik_deg[1:7]
 
 
-# --- 🧵 HILO DE ESCUCHA (EL CEREBRO AUTÓNOMO) ---
-# --- 🧵 HILO DE ESCUCHA (CON CHIVATO ACTIVADO) ---
+# --- 🧵 HILO DE ESCUCHA (CEREBRO VISIÓN -> ROBOT) ---
 def vision_listener():
     print(f"👂 Iniciando escucha directa de Visión en puerto {PUERTO_VISION}...")
     context = zmq.Context()
@@ -87,51 +67,54 @@ def vision_listener():
 
     global current_joints_deg
 
+    # Altura constante (Z del robot)
+    ALTURA_RECOGIDA = 0.20
+
     while True:
         try:
-            # 1. Recibir datos (Esto sigue igual para mantener el ritmo)
+            # 1. Recibir datos
             topic = socket.recv_string()
             json_str = socket.recv_string()
             data = json.loads(json_str)
 
-            # --- 🛑 ZONA DE PRUEBA (IGNORAMOS DATOS REALES) 🛑 ---
-            # Aunque la cámara diga X=3000, nosotros forzamos una buena.
+            # Solo procesamos si hay objeto y está calibrado
+            if data.get("objeto_encontrado") and data.get("calibrado"):
+                # --- ASIGNACIÓN DIRECTA (RAW) ---
+                # "Quiero que se mueva a la posición X que le pasa el código y a la Z"
 
-            # Simulamos que la pieza está 30cm delante y centrada
-            unity_x = 0.0  # 0.0 metros (Centro izquierda/derecha)
-            unity_z = 0.3  # 0.3 metros (30cm hacia el fondo)
-            unity_y = 0.20  # 0.2 metros (Altura)
+                raw_x = data["posicion"][0]
+                raw_z = data["posicion"][1]
 
-            print(f"🧪 [TEST] Forzando movimiento a: X={unity_x}, Z={unity_z}")
+                # Mapeo directo:
+                # Vision X -> Robot X
+                # Vision Z -> Robot Y (el otro eje del plano)
+                # Constante -> Robot Z (Altura)
 
-            # 2. TRADUCCIÓN DE EJES (Igual que antes)
-            target_x = unity_z  # 0.3
-            target_y = -unity_x  # 0.0
-            target_z = unity_y  # 0.2
+                target_x = raw_x
+                target_y = raw_z
+                target_z = ALTURA_RECOGIDA
 
-            print(f"   🤖 IK Objetivo: X={target_x:.2f}, Y={target_y:.2f}, Z={target_z:.2f}")
+                print(
+                    f"👁️ Directo: Recibido[{raw_x:.3f}, {raw_z:.3f}] -> Robot IK X:{target_x:.3f} Y:{target_y:.3f} Z:{target_z:.3f}")
 
-            # 3. CALCULAR Y MOVER
-            nuevos_angulos = calcular_ik_interno(target_x, target_y, target_z)
+                # --- D. CALCULAR Y MOVER ---
+                nuevos_angulos = calcular_ik_interno(target_x, target_y, target_z)
 
-            with state_lock:
-                current_joints_deg = nuevos_angulos
-
-            # Pequeña pausa para no saturar la consola en el test
-            time.sleep(0.5)
+                with state_lock:
+                    current_joints_deg = nuevos_angulos
 
         except Exception as e:
             print(f"⚠️ Error en listener: {e}")
             time.sleep(0.1)
 
-# Arrancamos el hilo de escucha en segundo plano
+
+# Arrancamos el hilo
 t = threading.Thread(target=vision_listener)
-t.daemon = True  # Se cierra si cierras el programa
+t.daemon = True
 t.start()
 
 
-# --- RUTAS FLASK (Para que Unity pueda leer el estado) ---
-
+# --- RUTAS FLASK ---
 @app.route('/get_state', methods=['GET'])
 def get_state():
     with state_lock:
@@ -151,19 +134,6 @@ def set_home():
         return "Error", 500
 
 
-# Mantenemos calculate_ik por si quieres usar el botón manual alguna vez
-@app.route('/calculate_ik', methods=['POST'])
-def calculate_ik():
-    try:
-        d = request.get_json()
-        res = calcular_ik_interno(d.get("x"), d.get("y"), d.get("z"))
-        with state_lock:
-            current_joints_deg = res
-        return jsonify({"joints": res}), 200
-    except:
-        return "Error", 500
-
-
 if __name__ == '__main__':
-    print("🚀 Servidor AUTÓNOMO Listo (Puerto 5000)")
+    print("🚀 Servidor AUTÓNOMO (DIRECTO) Listo (Puerto 5000)")
     app.run(host='0.0.0.0', port=5000)
