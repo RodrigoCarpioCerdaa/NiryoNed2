@@ -1,97 +1,131 @@
 ﻿using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
-using System.Globalization;
 
 [System.Serializable]
 public class RobotState
 {
-    public float[] joints; // Los 6 ángulos que manda Python
+    public float[] joints;
+    public bool gripper;
+    // Eliminado el campo 'cinta'
 }
 
 public class SimRobotController : MonoBehaviour
 {
     [Header("🔌 Conexión")]
     public string serverUrl = "http://127.0.0.1:5000";
-    public float pollInterval = 0.05f; // 20 veces por segundo
+    public float frecuencia = 0.05f;
 
-    [Header("🤖 Configuración Visual")]
-    public Transform[] jointTransforms; // Arrastra tus pivotes aquí
-    public Vector3[] jointAxes;         // Configura tus ejes (Z=1, etc)
-    public float smoothing = 20f;       // Velocidad de suavizado
+    [Header("🤖 Robot")]
+    public Transform[] jointTransforms;
+    public Vector3[] jointAxes;
+    public float suavizado = 20f;
 
-    [Header("🕵️ Cotilleo (Debug)")]
-    public bool mostrarDatosEnConsola = true; // ¿Quieres ver los logs?
-    public bool soloImprimirSiCambia = true;  // Para no llenar la consola si está quieto
+    [Header("🧲 Configuración Imán PRO")]
+    public Transform gripperTransform;
+    public float radioIman = 2.5f;
+    public LayerMask capaObjetos;
+    public string filtroTag = "Pieza";
 
     // Estado interno
-    private RobotState currentState = null;
-    private string ultimoJsonRecibido = ""; // Para comparar si ha cambiado
+    private RobotState estadoActual = null;
+    private Transform objetoEnMano = null;
 
-    void Start()
-    {
-        Debug.Log("🚀 SimRobotController INICIADO. Empezando a escuchar al servidor...");
-        StartCoroutine(PollLoop());
-    }
+    void Start() { StartCoroutine(BucleRed()); }
 
-    // --- 1. BUCLE DE ESCUCHA INFINITO ---
-    IEnumerator PollLoop()
+    IEnumerator BucleRed()
     {
         while (true)
         {
             using (UnityWebRequest www = UnityWebRequest.Get(serverUrl + "/get_state"))
             {
                 yield return www.SendWebRequest();
-
                 if (www.result == UnityWebRequest.Result.Success)
                 {
-                    string json = www.downloadHandler.text;
+                    estadoActual = JsonUtility.FromJson<RobotState>(www.downloadHandler.text);
 
-                    // --- EL CHIVATO ---
-                    if (mostrarDatosEnConsola)
-                    {
-                        // Si "soloSiCambia" está activo, solo imprimimos si el JSON es nuevo
-                        if (!soloImprimirSiCambia || json != ultimoJsonRecibido)
-                        {
-                            Debug.Log($"📥 RECIBIDO DE PYTHON: {json}");
-                            ultimoJsonRecibido = json;
-                        }
-                    }
-                    // ------------------
+                    // 1. Mover Robot (Se hace en Update, aquí solo guardamos datos)
 
-                    currentState = JsonUtility.FromJson<RobotState>(json);
-                }
-                else
-                {
-                    // Error de conexión (silenciado para no molestar si apagas el server)
-                    // Debug.LogWarning("⚠️ Esperando a Python... " + www.error);
+                    // 2. Controlar Imán
+                    ControlarIman(estadoActual.gripper);
+
+                    // Lógica de cinta eliminada completamente
                 }
             }
-
-            yield return new WaitForSeconds(pollInterval);
+            yield return new WaitForSeconds(frecuencia);
         }
     }
 
-    // --- 2. APLICAR MOVIMIENTO ---
+    void ControlarIman(bool encendido)
+    {
+        if (gripperTransform == null) return;
+
+        if (encendido)
+        {
+            // ACTIVAR: Si no tengo nada, busco algo
+            if (objetoEnMano == null)
+            {
+                Collider[] hits = Physics.OverlapSphere(gripperTransform.position, radioIman, capaObjetos);
+                foreach (Collider hit in hits)
+                {
+                    // ¡FILTRO DE TAG! Solo cogemos lo que sea "Pieza"
+                    if (hit.CompareTag(filtroTag))
+                    {
+                        objetoEnMano = hit.transform;
+
+                        // Quitamos físicas para que no pese
+                        var rb = objetoEnMano.GetComponent<Rigidbody>();
+                        if (rb) rb.isKinematic = true;
+
+                        // Lo pegamos a la mano
+                        objetoEnMano.SetParent(gripperTransform);
+                        objetoEnMano.localPosition = Vector3.zero;
+
+                        Debug.Log($"🧲 IMÁN: Atrapado '{objetoEnMano.name}'");
+                        return; // Ya tenemos uno, dejamos de buscar
+                    }
+                }
+            }
+        }
+        else
+        {
+            // DESACTIVAR: Soltar
+            if (objetoEnMano != null)
+            {
+                var rb = objetoEnMano.GetComponent<Rigidbody>();
+                if (rb) rb.isKinematic = false; // Devuelve gravedad
+
+                objetoEnMano.SetParent(null); // Lo suelta en el mundo
+                Debug.Log($"💨 IMÁN: Soltado '{objetoEnMano.name}'");
+
+                objetoEnMano = null;
+            }
+        }
+    }
+
     void Update()
     {
-        if (currentState == null || currentState.joints == null) return;
+        if (estadoActual == null || estadoActual.joints == null) return;
 
-        int count = Mathf.Min(jointTransforms.Length, currentState.joints.Length);
-
+        int count = Mathf.Min(jointTransforms.Length, estadoActual.joints.Length);
         for (int i = 0; i < count; i++)
         {
-            if (jointTransforms[i] != null)
-            {
-                float targetAngle = currentState.joints[i];
-                Quaternion targetRot = Quaternion.Euler(jointAxes[i] * targetAngle);
+            if (jointTransforms[i] == null) continue;
 
-                jointTransforms[i].localRotation = Quaternion.Slerp(
-                    jointTransforms[i].localRotation,
-                    targetRot,
-                    Time.deltaTime * smoothing
-                );
-            }
+            float angulo = estadoActual.joints[i];
+            Quaternion rot = Quaternion.Euler(jointAxes[i] * angulo);
+            jointTransforms[i].localRotation = Quaternion.Slerp(
+                jointTransforms[i].localRotation, rot, Time.deltaTime * suavizado
+            );
+        }
+    }
+
+    void OnDrawGizmos()
+    {
+        if (gripperTransform != null)
+        {
+            Gizmos.color = new Color(0, 1, 0, 0.2f);
+            Gizmos.DrawSphere(gripperTransform.position, radioIman);
         }
     }
 }

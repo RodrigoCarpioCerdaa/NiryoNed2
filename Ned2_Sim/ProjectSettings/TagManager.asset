@@ -6,6 +6,7 @@ TagManager:
   tags:
   - robot
   - Producto
+  - Pieza
   layers:
   - Default
   - TransparentFX

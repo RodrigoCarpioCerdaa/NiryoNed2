@@ -5,20 +5,32 @@ import threading
 import time
 import zmq
 import json
+import math
 
 # --- CONFIGURACIÓN ---
 URDF_FILE = "urdf_prueba.urdf"
 PUERTO_VISION = "5555"
 
 # --- 🚧 VALLA VIRTUAL (Safety Zone) 🚧 ---
-# Solo haremos caso a coordenadas que estén DENTRO de este rectángulo (en Metros).
-# Basado en tus ArUcos: X entre -1.8 y 1.2 | Z entre 2.5 y 5.9
 X_MIN, X_MAX = -1.8, 1.3
 Z_MIN, Z_MAX = 2.4, 6.0
+
+# --- 🏗️ ALTURAS ---
+ALTURA_VIAJE = 3.0
+ALTURA_COGER = 2.8
+
+# Zona de Entrega
+DROP_ZONE_X = -2.8
+DROP_ZONE_Z = 3.0
+
+# --- 🧠 PARÁMETROS DE PACIENCIA (ESTABILIDAD) ---
+UMBRAL_MOVIMIENTO = 0.005  # 5mm de margen (para ignorar ruido de cámara)
+FRAMES_PARA_CONFIRMAR = 30  # Cuantos frames debe estar "quieto" antes de atacar
 
 # --- 🔧 AJUSTE ODOMETRÍA ---
 AJUSTE_ANGULO_BASE = -90.0
 INVERTIR_GIRO_BASE = False
+AJUSTE_MUÑECA_PITCH = 90.0
 
 try:
     my_chain = ikpy.chain.Chain.from_urdf_file(URDF_FILE)
@@ -29,17 +41,23 @@ except Exception as e:
     my_chain = None
 
 app = Flask(__name__)
+
+# --- ESTADO DEL ROBOT ---
 current_joints_deg = [0.0] * 6
 HOME_POSE = [0.0] * 6
+gripper_encendido = False
+robot_ocupado = False
 state_lock = threading.Lock()
+
+# Variables para la estabilidad
+ultima_pos = (0, 0)
+contador_estabilidad = 0
 
 
 # --- FUNCIONES ---
 
 def es_zona_segura(x, z):
-    """ Devuelve True si la coordenada está dentro de los ArUcos """
-    if X_MIN <= x <= X_MAX and Z_MIN <= z <= Z_MAX:
-        return True
+    if X_MIN <= x <= X_MAX and Z_MIN <= z <= Z_MAX: return True
     return False
 
 
@@ -53,7 +71,6 @@ def calcular_ik_raw(x, y, z):
     ik_solution_rad = my_chain.inverse_kinematics(target_position)
     ik_solution_deg = np.degrees(ik_solution_rad).tolist()
 
-    # Corrección Base
     base = ik_solution_deg[1] + AJUSTE_ANGULO_BASE
     if INVERTIR_GIRO_BASE: base = -base
 
@@ -63,6 +80,7 @@ def calcular_ik_raw(x, y, z):
         base += 360
     ik_solution_deg[1] = base
 
+    ik_solution_deg[5] += AJUSTE_MUÑECA_PITCH
     return ik_solution_deg[1:7]
 
 
@@ -84,7 +102,42 @@ def simulate_move(target_joints, duration_sec=2.0):
         time.sleep(0.05)
 
 
-# --- HILO DE VISIÓN CON FILTRO DE ZONA ---
+# --- 🤖 RUTINA PICK & PLACE ---
+def rutina_coger_y_dejar(x_obj, z_obj):
+    global robot_ocupado, gripper_encendido
+
+    robot_ocupado = True
+    print(f"🚨 OBJETIVO FIJADO Y QUIETO EN [{x_obj:.2f}, {z_obj:.2f}] -> ATACANDO")
+
+    # Secuencia rápida
+    print("1️⃣ Aproximando...")
+    simulate_move(calcular_ik_raw(x_obj, z_obj, ALTURA_VIAJE), 2.0)
+
+    print("2️⃣ Bajando...")
+    simulate_move(calcular_ik_raw(x_obj, z_obj, ALTURA_COGER), 1.5)
+
+    print("3️⃣ 🧲 IMÁN ON")
+    with state_lock: gripper_encendido = True
+    time.sleep(0.8)
+
+    print("4️⃣ Subiendo...")
+    simulate_move(calcular_ik_raw(x_obj, z_obj, ALTURA_VIAJE), 1.5)
+
+    print(f"5️⃣ Entregando...")
+    simulate_move(calcular_ik_raw(DROP_ZONE_X, DROP_ZONE_Z, ALTURA_VIAJE), 3.0)
+
+    print("6️⃣ 💨 SOLTANDO")
+    with state_lock: gripper_encendido = False
+    time.sleep(0.8)
+
+    print("7️⃣ Home...")
+    simulate_move(HOME_POSE, 2.0)
+
+    robot_ocupado = False
+    print("✅ Esperando nueva pieza...")
+
+
+# --- HILO DE VISIÓN INTELIGENTE ---
 def vision_listener():
     print(f"👂 Escuchando visión en puerto {PUERTO_VISION}...")
     context = zmq.Context()
@@ -92,38 +145,45 @@ def vision_listener():
     socket.connect(f"tcp://localhost:{PUERTO_VISION}")
     socket.subscribe("VisionData")
 
-    global current_joints_deg
-    ALTURA_FIJA = 2.500
+    global current_joints_deg, ultima_pos, contador_estabilidad
 
     while True:
         try:
+            if robot_ocupado:
+                try:
+                    socket.recv_string(flags=zmq.NOBLOCK); socket.recv_string(flags=zmq.NOBLOCK)
+                except:
+                    pass
+                time.sleep(0.1)
+                continue
+
             topic = socket.recv_string()
             json_str = socket.recv_string()
             data = json.loads(json_str)
 
             if data.get("objeto_encontrado") and data.get("calibrado"):
 
-                vision_x = data["posicion"][0]/1000
-                vision_z = data["posicion"][1]/1000
+                # Coordenadas actuales
+                vx = data["posicion"][0] / 1000
+                vz = data["posicion"][1] / 1000
 
-                # --- 🛑 FILTRO DE SEGURIDAD 🛑 ---
-                if not es_zona_segura(vision_x, vision_z):
-                    print(f"⛔ IGNORADO: Objeto fuera de zona ({vision_x:.2f}, {vision_z:.2f})")
-                    continue  # Saltamos al siguiente ciclo sin mover el robot
-                # ---------------------------------
+                vision_id = data.get("id", -1)
+                vision_color = str(data.get("color", "unknown")).lower()
 
-                target_x = vision_x
-                target_y = vision_z
-                target_z = ALTURA_FIJA
+                if not es_zona_segura(vx, vz): continue
 
-                print(f"✅ ACEPTADO: [{target_x:.2f}, {target_y:.2f}]")
-                nuevos_angulos = calcular_ik_raw(target_x, target_y, target_z)
-
-                angulos_bonitos = [round(a, 2) for a in nuevos_angulos]
-                print(f"📐 MOTORES: {angulos_bonitos}")
-
+                # --- 1. PRIMERO SIEMPRE SEGUIMOS (TRACKING) ---
+                # El robot siempre mirará a la pieza, se mueva o no.
+                target_z_robot = ALTURA_VIAJE
+                nuevos_angulos = calcular_ik_raw(vx, vz, target_z_robot)
                 with state_lock:
                     current_joints_deg = nuevos_angulos
+
+                # --- 2. ¿ES EL ELEGIDO (VERDE)? ---
+                if vision_id == 1 or "verd" in vision_color or "green" in vision_color:
+                    threading.Thread(target=rutina_coger_y_dejar, args=(vx, vz)).start()
+                    time.sleep(3.0)
+                    continue
 
         except zmq.Again:
             continue
@@ -140,18 +200,17 @@ t_vision.start()
 # --- RUTAS FLASK ---
 @app.route('/get_state', methods=['GET'])
 def get_state():
-    with state_lock: return jsonify({"joints": current_joints_deg})
+    with state_lock:
+        return jsonify({"joints": current_joints_deg, "gripper": gripper_encendido})
 
 
 @app.route('/set_home', methods=['POST'])
 def set_home():
     global current_joints_deg, HOME_POSE
     try:
-        data = request.get_json()
-        if data.get("joints"):
-            with state_lock:
-                current_joints_deg = data.get("joints")
-                HOME_POSE = data.get("joints")
+        d = request.get_json()
+        if d.get("joints"):
+            with state_lock: current_joints_deg = d.get("joints"); HOME_POSE = d.get("joints")
             return "OK", 200
     except:
         return "Error", 500
@@ -160,8 +219,8 @@ def set_home():
 @app.route('/calculate_ik', methods=['POST'])
 def calculate_ik():
     try:
-        data = request.get_json()
-        x, y, z = float(data.get("x", 0.3)), float(data.get("y", 0.0)), float(data.get("z", 0.2))
+        d = request.get_json()
+        x, y, z = float(d.get("x", 0.3)), float(d.get("y", 0.0)), float(d.get("z", 0.2))
         final = calcular_ik_raw(x, y, z)
         threading.Thread(target=simulate_move, args=(final, 2.0)).start()
         return jsonify({"joints": final}), 200
@@ -176,5 +235,5 @@ def move_home():
 
 
 if __name__ == '__main__':
-    print("🚀 Servidor con VALLA VIRTUAL listo (Puerto 5000)")
+    print("🚀 Servidor 'DEPREDADOR PACIENTE' listo (Puerto 5000)")
     app.run(host='0.0.0.0', port=5000)
