@@ -484,7 +484,19 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 312084802}
     m_Modifications:
+<<<<<<< Updated upstream
     - target: {fileID: 2241276084869742348, guid: d28639f6e32e4c84aac7759f3345da2c, type: 3}
+=======
+    - target: {fileID: 1500175490671402639, guid: a7c1961608c02b647939a9d4d7771bce, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2120028649771859926, guid: a7c1961608c02b647939a9d4d7771bce, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: c652b6cd1f8e88e47b0ddbb5eb8e0916, type: 2}
+    - target: {fileID: 6526786094122116685, guid: a7c1961608c02b647939a9d4d7771bce, type: 3}
+>>>>>>> Stashed changes
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
